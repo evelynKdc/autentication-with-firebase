@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
+import { emailRegisterUser } from "../helpers/mailRegister";
+import { googleLogin } from "../helpers/googleLogin";
 
 export const Register = () => {
   const [success, setSucces] = useState(false);
@@ -30,6 +32,18 @@ export const Register = () => {
       setTimeout(()=>{setSucces(false)},3000)
     },
   });
+
+  const handlerRegisterGoogle = async () =>{
+    await googleLogin();
+  }
+
+  const handlerRegisterEmail = async () =>{
+    try {
+      await emailRegisterUser(values.email, values.password);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div>
@@ -60,10 +74,14 @@ export const Register = () => {
         />
         {errors.password && <span>{errors.password}</span>}
 
-        <button type="submit">Registrar</button>
+        <button type="submit" onClick={handlerRegisterEmail}>Registrar</button>
       </form>
       {success && <div>Registro exitoso</div>}
       <Link to="/">Tengo una cuenta</Link>
+
+      <div>
+        <button onClick={handlerRegisterGoogle}>Google</button>
+      </div>
     </div>
   );
 };
